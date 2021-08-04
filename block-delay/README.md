@@ -54,7 +54,3 @@ The [Polkadot.js Script](#polkadot-js-script) that subscribes to the latest bloc
 
 So all DataHighway chains that are running multiple nodes and finalizing blocks are encountering this delay.
 However, the Substrate Node Template does not encounter the delay.
-
-## References
-
-* https://github.com/DataHighway-DHX/node/pull/215
