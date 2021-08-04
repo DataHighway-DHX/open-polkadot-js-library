@@ -12,6 +12,7 @@
 
 A client has reported delays in when trying update new blocks on their local server of DataHighway Westlake mainnet. It occurs when they query http://xxx:8585/blocks/head. They are reporting the dhx.api HTTP status code is not 200-299. They said they are experiencing a delay and timeout similar to this issue https://github.com/polkadot-js/api/issues/3365 every few mins. They said as a result users are not able to topup or withdraw in time. The said their node has both http and ws connections.
 
+The following approaches were used to try to replicate and troubleshoot the issue.
 ## Polkadot.js Script
 
 * Switch to a version of Node.js >14
