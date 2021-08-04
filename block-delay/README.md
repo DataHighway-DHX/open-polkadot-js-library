@@ -1,4 +1,4 @@
-# Polkadot.js Library for Data Highway
+# Troubleshooting Block Header Delay when Querying DataHighway
 
 ## Table of Contents
 
