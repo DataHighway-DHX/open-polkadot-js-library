@@ -13,6 +13,7 @@
 A client has reported delays in when trying update new blocks on their local server of DataHighway Westlake mainnet. It occurs when they query http://xxx:8585/blocks/head. They are reporting the dhx.api HTTP status code is not 200-299. They said they are experiencing a delay and timeout similar to this issue https://github.com/polkadot-js/api/issues/3365 every few mins. They said as a result users are not able to topup or withdraw in time. The said their node has both http and ws connections.
 
 The following approaches were used to try to replicate and troubleshoot the issue.
+
 ## Polkadot.js Script
 
 * Switch to a version of Node.js >14
@@ -51,7 +52,9 @@ The [Polkadot.js Script](#polkadot-js-script) that subscribes to the latest bloc
 
 * Checked latest [Substrate Node Template using Aura](https://github.com/substrate-developer-hub/substrate-node-template). Ran five (5) validator nodes locally. Ran `node index.js "local"`. Blocktime is 6 seconds. No delays encountered (even after changing to 4.32 second blocktime). Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-substrate-node-template-aura/local-testnet-2021-08-04-08:20-339000000.csv
 
-* Checked fork of [Substrate Node Template using Babe + Grandpa](https://github.com/ltfschoen/substrate-node-template). Ran five (5) validator nodes locally. Ran `node index.js "local"`. Blocktime is 6 seconds. No delays encountered (even after changing to 4.32 second blocktime). Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-substrate-node-template-babe/local-testnet-2021-08-04-08:49-097000000.csv
+* Checked fork of [Substrate Node Template using Babe + Grandpa](https://github.com/ltfschoen/substrate-node-template) and used branch 'luke/staking', which has been converted to Babe + Grandpa. Ran five (5) validator nodes locally. Ran `node index.js "local"`. Blocktime varied up to 6x what was specified in the runtime config. Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-substrate-node-template-babe/local-testnet-2021-08-09-10:33-291000000.csv
+
+* Checked latest Substrate. Ran five (5) validator nodes locally. Ran `node index.js "local"`. Blocktime is 6 seconds. No delays encountered. Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-substrate-babe/local-testnet-2021-08-04-12:47-879000000.csv
 
 So all DataHighway chains that are running multiple nodes and finalizing blocks are encountering this delay.
 However, the Substrate Node Template does not encounter the delay.
