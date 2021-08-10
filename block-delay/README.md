@@ -19,10 +19,13 @@ The following approaches were used to try to replicate and troubleshoot the issu
 * Switch to a version of Node.js >14
 
 * Replace `<CHAIN>` below with the chain to connect to (i.e. `local` (for "Development" or "Local", `brickable`, `harbour`, or `westlake`). e.g. `node index.js "westlake"`
+
 ```
 yarn
 node index.js "<CHAIN>" 
 ```
+
+* Replace contents of ./custom_types.json with the custom types for the blockchain used. See https://polkadot.js.org/docs/api/start/types.extend#extension
 
 * View data that is generated in subdirectory /data. The filename generated contains the chain it connected to and the date the data was produced.
 

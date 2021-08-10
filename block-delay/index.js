@@ -29,13 +29,19 @@ function getWsProviderForArg() {
 async function main () {
   const url = getWsProviderForArg();
   const provider = new WsProvider(url);
+  let data;
+  let custom_types;
+  try {
+      data = fs.readFileSync('./custom_types.json', 'utf8');
+      custom_types_obj = JSON.parse(data);
+  } catch (err) {
+      console.log(`Error reading file from disk: ${err}`);
+  }
 
   // Create the API and wait until ready (optional provider passed through)
   const api = await ApiPromise.create({
     provider,
-    types: {
-      AccountInfo: 'AccountInfoWithDualRefCount'
-    }
+    types: custom_types,
   });
 
   const chain = await api.rpc.system.chain();
