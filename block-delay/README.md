@@ -25,7 +25,7 @@ yarn
 node index.js "<CHAIN>" 
 ```
 
-* Replace contents of ./custom_types.json with the custom types for the blockchain used. See https://polkadot.js.org/docs/api/start/types.extend#extension
+* Replace contents of ./custom_types.json with the custom types for the blockchain used, OR replace the contents of ./custom_types.js depending on the format they are provided in. See https://polkadot.js.org/docs/api/start/types.extend#extension
 
 * View data that is generated in subdirectory /data. The filename generated contains the chain it connected to and the date the data was produced.
 

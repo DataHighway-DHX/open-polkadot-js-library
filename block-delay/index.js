@@ -1,13 +1,14 @@
 const moment = require('moment');
 const fs = require('fs');
 const { ApiPromise, WsProvider } = require('@polkadot/api');
+const custom_types_js = require('./custom_types.js');
 
 function getWsProviderForArg() {
   let args = process.argv.slice(2);
   let url;
   switch (args[0]) {
     case 'local':
-      url = 'ws://127.0.0.1:9944'
+      url = 'ws://127.0.0.1:9944';
       break;
     case 'brickable':
       url = 'wss://brickable.datahighway.com'; // Testnet (Private)
@@ -33,9 +34,12 @@ async function main () {
   let custom_types;
   try {
       data = fs.readFileSync('./custom_types.json', 'utf8');
-      custom_types_obj = JSON.parse(data);
+      custom_types = JSON.parse(data);
   } catch (err) {
       console.log(`Error reading file from disk: ${err}`);
+  }
+  if (Object.keys(custom_types).length == 0) {
+    custom_types = custom_types_js;
   }
 
   // Create the API and wait until ready (optional provider passed through)
