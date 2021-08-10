@@ -51,6 +51,8 @@ The [Polkadot.js Script](#polkadot-js-script) that subscribes to the latest bloc
 
 * Checked DataHighway Local. Ran five (5) validator nodes locally. Ran `node index.js "local"`. Similar findings to Westlake and Harbour. Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-datahighway/local-testnet-2021-08-04-07:55-523000000.csv
 
+* Checked DataHighway Local (after converting from Babe to Aura in branch 'luke/MMD-1309/update-substrate-3-convert-babe-to-aura' commit 75d282bda06550444689905045a444239dd76747). Ran five (5) validator nodes locally. Ran `node index.js "local"`. Blocktime should be 4.32 seconds, but every 5th block it is ~8.64 seconds. Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-datahighway-aura/local-testnet-2021-08-10-09:52-891000000.csv
+
 * Checked DataHighway Dev. Ran one dev node with `./target/release/datahighway --dev`. Ran `node index.js "local"`. No delays encountered. Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-datahighway/development-2021-08-04-07:34-980000000.csv
 
 * Checked latest [Substrate Node Template using Aura](https://github.com/substrate-developer-hub/substrate-node-template). Ran five (5) validator nodes locally. Ran `node index.js "local"`. Blocktime is 6 seconds. No delays encountered (even after changing to 4.32 second blocktime). Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-substrate-node-template-aura/local-testnet-2021-08-04-08:20-339000000.csv
