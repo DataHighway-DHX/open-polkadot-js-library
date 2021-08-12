@@ -83,6 +83,9 @@ So now that we know the pattern of delay and how it depends on the amount of ini
 
 But I'm not sure what the Babe pattern means or suggests we should do other than to run more authorities than amount of authorities listed in the chain spec, but I'm not sure how many are required. So another alternative is to convert from Babe to Aura so we know.
 
+When using Babe I tried running two more custom validators (Gerald, Herbert) and inserted their keys (in addition to the six running by default Alice, Bob, Charlie, Dave, Eve, Ferdie), but there were still delays.
+Worth noting is that when I switched to Babe on the same blockchain I had also added use of ImOnline and Authority Discovery, which I wasn't using when using Aura, so I'm going to try using Babe again but after removing ImOnline and Authority Discovery to see if that's causing the issue.
+
 ### Root Cause
 
 The root cause was identified as being due to I) mentioned above.
