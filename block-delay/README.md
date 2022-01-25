@@ -54,6 +54,10 @@ C) Checked DataHighway Local. Ran five (5) validator nodes locally. Ran `node in
 
 D) Checked DataHighway Local (after converting from Babe to Aura in branch 'luke/MMD-1309/update-substrate-3-convert-babe-to-aura' commit 75d282bda06550444689905045a444239dd76747). Ran five (5) validator nodes locally. Ran `node index.js "local"`. Blocktime should be 4.32 seconds, but every 5th block it is ~8.64 seconds. Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-datahighway-aura/local-testnet-2021-08-10-09:52-891000000.csv
 
+Update 17th Aug 2021: If the initial authorities 3-5 for "local" in chain_spec.rs are removed, then when 5 validators (i.e. Alice, ..., Eve) are run there is no delay.
+
+D-1) Checked DataHighway Brickable (after converting from Babe to Aura in branch 'luke/MMD-1309/update-substrate-3-convert-babe-to-aura' commit 75d282bda06550444689905045a444239dd76747). Remove old data with `rm -rf /tmp/polkadot-chains`. Removed the initial authorities 3-5 for "brickable" from chain_spec.rs. Rebuilt with `cargo build --release`. Ran the five (5) validator nodes locally that we'd removed from chain_spec.rs. Inserted their session keys for Babe and Aura. Restarted all of the nodes so it finalized blocks. Ran `node index.js "local"`. Blocktime was 4.32 seconds with no delay.
+
 E) Checked DataHighway Dev. Ran one dev node with `./target/release/datahighway --dev`. Ran `node index.js "local"`. No delays encountered. Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-datahighway/development-2021-08-04-07:34-980000000.csv
 
 F) Checked latest [Substrate Node Template using Aura](https://github.com/substrate-developer-hub/substrate-node-template). Ran five (5) validator nodes locally. Ran `node index.js "local"`. Blocktime is 6 seconds. No delays encountered (even after changing to 4.32 second blocktime). Responses stored in /DataHighway-DHX/open-polkadot-js-library/block-delay/backup/data-substrate-node-template-aura/local-testnet-2021-08-04-08:20-339000000.csv
