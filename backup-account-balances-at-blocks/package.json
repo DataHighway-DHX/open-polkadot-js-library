@@ -1,0 +1,11 @@
+{
+  "name": "backup-account-balances-at-blocks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Luke Schoen <luke@mxc.org>",
+  "license": "Apache-2",
+  "dependencies": {
+    "@polkadot/api": "^7.3.1",
+    "moment": "^2.29.1"
+  }
+}
