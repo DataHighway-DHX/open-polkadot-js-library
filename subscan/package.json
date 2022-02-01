@@ -1,0 +1,13 @@
+{
+  "name": "subscan",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Luke Schoen <luke@mxc.org>",
+  "license": "Apache-2",
+  "dependencies": {
+    "@polkadot/api": "^5.3.2",
+    "axios": "^0.24.0",
+    "dotenv": "^10.0.0",
+    "moment": "^2.29.1"
+  }
+}
