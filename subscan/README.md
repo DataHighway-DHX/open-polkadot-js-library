@@ -56,3 +56,16 @@ curl -X POST https://datahighway.api.subscan.io/api/scan/accounts \
 
 * View the data that was retrieved and stored in a file in the ./data subdirectory
 
+* Issue:
+
+In the Subscan UI there's a variety of rounding down values:
+
+37 to 18 decimal places (e.g. "partial fee", "tip", "Parameters")
+37 to 16 decimal places (e.g. "balance")
+37 to 15 decimal places (e.g. "transferrable")
+So the values show in the UI and retrieved from the Subscan API are not to their actual precision of 37 decimal places, and instead only the rounded down values are available.
+
+So for the purpose of a hardspoon using balances obtained from the Subscan API, each account will only be credited their account balance rounded down to 15 decimal places.
+
+This impact should be minimal since at an exchange rate of ~US$5 per DHX, the maximum missing value per account would be ~0.000000000000000999* DHX, which is ~US$0.000000000000005.
+It should still be conveyed to the community.
