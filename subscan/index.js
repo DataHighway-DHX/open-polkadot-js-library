@@ -2,6 +2,8 @@ require('dotenv').config();
 const axios = require('axios').default;
 const moment = require('moment');
 const fs = require('fs');
+const { u8aToHex } = require('@polkadot/util');
+const { decodeAddress } = require('@polkadot/util-crypto');
 
 const sleep = (delay) => {
   return new Promise(function(resolve) {
@@ -38,6 +40,17 @@ async function query(api_key, endpoint, method, payload) {
   const response = await req(api_key, endpoint, method, payload);
 
   return response;
+}
+
+// reference/credits: Shawn Tabrizi https://github.com/ltfschoen/substrate-js-utilities/blob/master/utilities.js#L67
+function accountSS58ToPublicKeyHex(addressSS58) {
+  let addressPublicKeyHex;
+  try {
+    addressPublicKeyHex = u8aToHex(decodeAddress(addressSS58));
+  } catch (e) {
+    throw new Error(`Unable to convert u8a to hex for decoded SS58 address {e}`);
+  }
+  return addressPublicKeyHex;
 }
 
 async function main () {
@@ -92,21 +105,53 @@ async function main () {
       resAccounts["accounts"].push(res2.data.list[acct]);
     }
   }
-
-  // serialize the retrieved data to JSON and store in file
-  const resAccountsSerialized = JSON.stringify(resAccounts);
-
   // console.log("resAccounts: ", resAccounts["accounts"]);
+
+  // restructure into a new .json file with an outer "balances" key whose value is
+  // an array of arrays where each has two elements, including the public key of the
+  // account to be credited and the amount to be credited.
+  // see https://github.com/DataHighway-DHX/DataHighway-Parachain/pull/5/files#diff-03ba6e560e063bae9ad8da38df998bafd6ac9c236bc8fed1ac6d610f01d1778dR1
+  let genesisObj = {
+    "balances": []
+  };
+  let balanceObj, publicKeyHex, publicKeyHexStripped, accountPublicKey, accountBalance;
+
+  // use 'for of' loop since maybe order is important for cross checking
+  for (const acct of resAccounts["accounts"]) {
+    // console.log(`${acct["address"]}: ${acct["balance"]}`);
+
+    balanceObj = [];
+
+    // convert SS58 address that we retrieved to Public Key (hex) but without the '0x' prefix
+    // - https://datahighway.subscan.io/tools/format_transform
+    // - https://github.com/shawntabrizi/substrate-js-utilities/blob/master/utilities.js#L67
+
+    publicKeyHex = accountSS58ToPublicKeyHex(String(acct["address"]));
+    publicKeyHexStripped = publicKeyHex.replace(/^0x/, '');
+    // console.log('publicKeyHexStripped: ', publicKeyHexStripped);
+
+    accountPublicKey = publicKeyHexStripped;
+    accountBalance = acct["balance"];
+    balanceObj.push(accountPublicKey);
+    balanceObj.push(accountBalance);
+    genesisObj["balances"].push(balanceObj);
+  }
+  // console.log("genesisObj: ", genesisObj);
+
+  // serialize the retrieved and modified data to JSON and store in file
+  const genesisObjSerialized = JSON.stringify(genesisObj);
 
   console.log('saving accounts at current time: ', new Date());
   // https://momentjs.com/docs/
-  const fileName = `${ENDPOINT}-${METHOD.replace(/\//g, '-').toLowerCase()}-${moment(new Date()).format("YYYY-MM-DD-HH:mm-SSSSSSSSS").toString()}`;
+  // we'll add "-genesis-fixture" at the end of the filename if we've modified the
+  // retrieved data to make it compatible for importing it as a genesis.json file fixture
+  const fileName = `${ENDPOINT}-${METHOD.replace(/\//g, '-').toLowerCase()}-${moment(new Date()).format("YYYY-MM-DD-HH:mm-SSSSSSSSS").toString()}-genesis-fixture`;
 
   fs.mkdir(`${process.cwd()}/data`, () => {});
   let dataPath = `${process.cwd()}/data/${fileName}.json`;
 
   // write accounts to a file
-  fs.appendFile(dataPath, resAccountsSerialized, function (err) {
+  fs.appendFile(dataPath, genesisObjSerialized, function (err) {
     if (err) {
       return console.log("error writing accounts to file", err);
     }
@@ -122,8 +167,8 @@ async function main () {
     }
     console.log('page numbers processed: ', maxPages);
     console.log('accounts available from API: ', resCount);
-    console.log('accounts processed: ', dataParsedJSON["accounts"].length);
-    if (dataParsedJSON["accounts"].length == resCount) {
+    console.log('accounts processed: ', dataParsedJSON["balances"].length);
+    if (dataParsedJSON["balances"].length == resCount) {
       console.log("Successfully verified that correct amount of accounts were stored");
     } else {
       console.error("incorrect number of accounts stored. please check that all relevant pages were processed!");
