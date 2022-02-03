@@ -139,7 +139,8 @@ async function main () {
   // console.log("genesisObj: ", genesisObj);
 
   // serialize the retrieved and modified data to JSON and store in file
-  const genesisObjSerialized = JSON.stringify(genesisObj);
+  // format output indentation with 4 spaces
+  const genesisObjSerialized = JSON.stringify(genesisObj, undefined, 4);
 
   console.log('saving accounts at current time: ', new Date());
   // https://momentjs.com/docs/
