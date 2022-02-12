@@ -56,7 +56,7 @@ function accountSS58ToPublicKeyHex(addressSS58) {
 async function main () {
   // obtain a Subscan API Key from https://docs.api.subscan.io/#introduction
   const SUBSCAN_API_KEY = process.env.SUBSCAN_API_KEY;
-  const ENDPOINT = 'datahighway.api.subscan.io';
+  const ENDPOINT = process.env.ENDPOINT;
   const METHOD = 'api/scan/accounts';
 
   // fetch data
