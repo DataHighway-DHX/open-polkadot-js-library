@@ -27,7 +27,11 @@ export SUBSCAN_API_KEY=<INSERT_SUBSCAN_API_KEY>
 echo $SUBSCAN_API_KEY
 ```
 
-* Change the value of the `ENDPOINT` constant in the file index.js to one of the endpoints provided by the Subscan API https://docs.api.subscan.io/#api-endpoints. For example to query the DataHighway network use the value "datahighway.api.subscan.io".
+* Change the value of the `ENDPOINT` environment variable to one of the endpoints provided by the Subscan API https://docs.api.subscan.io/#api-endpoints. For example to query the DataHighway network use the value "datahighway.api.subscan.io".
+```
+export ENDPOINT=<INSERT_ENDPOINT>
+echo $ENDPOINT
+```
 
 * Change the value of the `METHOD` constant in the file index.js to the Request URL. For example to query the accounts https://docs.api.subscan.io/#accounts of the DataHighway network, you would use the value 'api/scan/accounts'.
 
