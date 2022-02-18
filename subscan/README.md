@@ -60,6 +60,19 @@ curl -X POST https://datahighway.api.subscan.io/api/scan/accounts \
 
 * View the data that was retrieved and stored in a file in the ./data subdirectory
 
+* Optionally convert all values from their Public Key (Hex) into SS58 Address equivalent.
+
+* Change the value of the `FILENAME` environment variable to file that was generated. For example "datahighway.api.subscan.io-api-scan-accounts-2022-02-03-12:09-993000000-genesis-fixture".
+```
+export FILENAME=<INSERT_FILENAME>
+echo $FILENAME
+```
+
+```
+yarn
+node convert.js 
+```
+
 * Issue:
 
 In the Subscan UI there's a variety of rounding down values:
