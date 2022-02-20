@@ -63,9 +63,10 @@ curl -X POST https://datahighway.api.subscan.io/api/scan/accounts \
 * Optionally convert all values from their Public Key (Hex) into SS58 Address equivalent.
 
 * Change the value of the `FILENAME` environment variable to file that was generated. For example "datahighway.api.subscan.io-api-scan-accounts-2022-02-03-12:09-993000000-genesis-fixture".
+* Also set the amount of tokenDecimals used by the chain in chain_spec.rs of the Substrate-based chain to `CHAIN_TOKEN_DECIMALS` ("18" is used by default if not specified)
 ```
-export FILENAME=<INSERT_FILENAME>
-echo $FILENAME
+export FILENAME=<INSERT_FILENAME> CHAIN_TOKEN_DECIMALS=<INSERT_CHAIN_TOKEN_DECIMALS>
+echo $FILENAME $CHAIN_TOKEN_DECIMALS
 ```
 
 ```

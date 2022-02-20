@@ -1,6 +1,7 @@
 const moment = require('moment');
 const fs = require('fs');
 const { encodeAddress } = require('@polkadot/util-crypto');
+const { assert } = require('@polkadot/util');
 
 // reference/credits: Shawn Tabrizi https://github.com/ltfschoen/substrate-js-utilities/blob/master/utilities.js#L67
 function accountPublicKeyToSS58(accountPublicKey) {
@@ -16,8 +17,23 @@ function accountPublicKeyToSS58(accountPublicKey) {
   return accountSS58;
 }
 
+// Since we need to generate a .json file that doesn't contain values with decimal places
+// for importing accounts into genesis here https://github.com/DataHighway-DHX/DataHighway-Parachain/pull/5/commits/f4d274ef2b20cb62e43eede8f184d143cfa9f2cd
+// If the original value was 18.400991637728733, and the tokenDecimals defined in the relevant
+// chain_spec.rs file of the Substrate based chain is 18, then we need to change the
+// value so it has extra 0's at the end so it has 18 decimal places instead of only 15, and
+// then remove the decimal point.
+function getNewBalanceForTokenDecimals(existingBalanceVal, chainTokenDecimals) {
+  let currentDecimals = existingBalanceVal.length - (existingBalanceVal.indexOf('.') + 1);
+  let extraRequired = chainTokenDecimals - currentDecimals;
+  let newStrWithoutDecimal = existingBalanceVal.concat("0".repeat(extraRequired)).replace('.', '');
+  return newStrWithoutDecimal;
+}
+
 async function main () {
+  assert(getNewBalanceForTokenDecimals("123.456789", 18) == "123456789000000000000", "failed balance conversion test");
   const FILENAME = process.env.FILENAME;
+  let CHAIN_TOKEN_DECIMALS = process.env.CHAIN_TOKEN_DECIMALS || 18;
 
   // verify able to read data that was stored
   let data, dataParsedJSON;
@@ -30,28 +46,34 @@ async function main () {
   // console.log('accounts available: ', dataParsedJSON["balances"].length);
 
   let maxBalances = dataParsedJSON["balances"].length;
-  
+
   let accountPublicKey;
   let newAccount;
   let ss58ForPublicKey;
-  let genesisObj = {
-    "balances": []
-  };
+  let existingBalanceVal;
+  let genesisVec = [];
   for (let accountIndex = 0; accountIndex <= maxBalances - 1; accountIndex++) {
     accountPublicKey = dataParsedJSON["balances"][accountIndex][0];
     // console.log('accountPublicKey: ', accountPublicKey);
     ss58ForPublicKey = accountPublicKeyToSS58(accountPublicKey);
+
+    existingBalanceVal = String(dataParsedJSON["balances"][accountIndex][1]);
+    // count amount of numbers after the decimal place in the string,
+    // add more 0's at the end so there are 18 of them if the chain has 18 tokenDecimals.
+    // then remove the decimal point from the string
+    newBalanceVal = getNewBalanceForTokenDecimals(existingBalanceVal, CHAIN_TOKEN_DECIMALS);
+
     newAccount = [
       ss58ForPublicKey,
-      dataParsedJSON["balances"][accountIndex][1],
+      newBalanceVal,
     ];
-    genesisObj["balances"].push(newAccount);
+    genesisVec.push(newAccount);
   }
-  console.log("genesisObj: ", genesisObj);
+  console.log("genesisVec: ", genesisVec);
 
   // serialize the modified data to JSON and store in file
   // format output indentation with 4 spaces
-  const genesisObjSerialized = JSON.stringify(genesisObj, undefined, 4);
+  const genesisVecSerialized = JSON.stringify(genesisVec, undefined, 4);
 
   console.log('saving accounts at current time: ', new Date());
   // https://momentjs.com/docs/
@@ -64,7 +86,7 @@ async function main () {
   let dataPath = `${process.cwd()}/data/${newFileName}.json`;
 
   // write accounts to a file
-  fs.appendFile(dataPath, genesisObjSerialized, function (err) {
+  fs.appendFile(dataPath, genesisVecSerialized, function (err) {
     if (err) {
       return console.log("error writing accounts to file", err);
     }
@@ -78,8 +100,8 @@ async function main () {
     } catch (err) {
       console.log(`Error reading file: ${err}`);
     }
-    console.log('accounts processed: ', dataParsedJSON["balances"].length);
-    if (dataParsedJSON["balances"].length == maxBalances) {
+    console.log('accounts processed: ', dataParsedJSON.length);
+    if (dataParsedJSON.length == maxBalances) {
       console.log("Successfully verified that correct amount of accounts were stored");
     } else {
       console.error("incorrect number of accounts stored. please check that all relevant pages were processed!");
