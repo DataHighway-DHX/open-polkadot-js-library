@@ -23,6 +23,8 @@ function accountPublicKeyToSS58(accountPublicKey) {
 // chain_spec.rs file of the Substrate based chain is 18, then we need to change the
 // value so it has extra 0's at the end so it has 18 decimal places instead of only 15, and
 // then remove the decimal point.
+// Note: We don't use something like `> 123.456789.toFixed(18) because the output ends up like
+// '123.456789000000000556'`
 function getNewBalanceForTokenDecimals(existingBalanceVal, chainTokenDecimals) {
   let currentDecimals = existingBalanceVal.length - (existingBalanceVal.indexOf('.') + 1);
   let extraRequired = chainTokenDecimals - currentDecimals;
