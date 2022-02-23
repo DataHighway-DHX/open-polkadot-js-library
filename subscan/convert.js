@@ -2,6 +2,7 @@ const moment = require('moment');
 const fs = require('fs');
 const { encodeAddress } = require('@polkadot/util-crypto');
 const { assert } = require('@polkadot/util');
+const BigNumber = require('bignumber.js');
 
 // reference/credits: Shawn Tabrizi https://github.com/ltfschoen/substrate-js-utilities/blob/master/utilities.js#L67
 function accountPublicKeyToSS58(accountPublicKey) {
@@ -23,6 +24,8 @@ function accountPublicKeyToSS58(accountPublicKey) {
 // chain_spec.rs file of the Substrate based chain is 18, then we need to change the
 // value so it has extra 0's at the end so it has 18 decimal places instead of only 15, and
 // then remove the decimal point.
+// Note: We don't use something like `> 123.456789.toFixed(18) because the output ends up like
+// '123.456789000000000556'`
 function getNewBalanceForTokenDecimals(existingBalanceVal, chainTokenDecimals) {
   let currentDecimals = existingBalanceVal.length - (existingBalanceVal.indexOf('.') + 1);
   let extraRequired = chainTokenDecimals - currentDecimals;
@@ -52,6 +55,8 @@ async function main () {
   let ss58ForPublicKey;
   let existingBalanceVal;
   let genesisVec = [];
+  let totalIssuanceBackup = new BigNumber("0".toString());
+  let newBalanceValBigNumber;
   for (let accountIndex = 0; accountIndex <= maxBalances - 1; accountIndex++) {
     accountPublicKey = dataParsedJSON["balances"][accountIndex][0];
     // console.log('accountPublicKey: ', accountPublicKey);
@@ -67,9 +72,16 @@ async function main () {
       ss58ForPublicKey,
       newBalanceVal,
     ];
+    newBalanceValBigNumber = new BigNumber(newBalanceVal);
+    if (newBalanceValBigNumber != undefined) {
+      totalIssuanceBackup = totalIssuanceBackup.plus(newBalanceValBigNumber);
+    }
+    console.log(totalIssuanceBackup.toString());
+
     genesisVec.push(newAccount);
   }
   console.log("genesisVec: ", genesisVec);
+  console.log("totalIssuanceBackup: ", totalIssuanceBackup.toString());
 
   // serialize the modified data to JSON and store in file
   // format output indentation with 4 spaces
