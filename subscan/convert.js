@@ -2,6 +2,7 @@ const moment = require('moment');
 const fs = require('fs');
 const { encodeAddress } = require('@polkadot/util-crypto');
 const { assert } = require('@polkadot/util');
+const BigNumber = require('bignumber.js');
 
 // reference/credits: Shawn Tabrizi https://github.com/ltfschoen/substrate-js-utilities/blob/master/utilities.js#L67
 function accountPublicKeyToSS58(accountPublicKey) {
@@ -54,6 +55,8 @@ async function main () {
   let ss58ForPublicKey;
   let existingBalanceVal;
   let genesisVec = [];
+  let totalIssuanceBackup = new BigNumber("0".toString());
+  let newBalanceValBigNumber;
   for (let accountIndex = 0; accountIndex <= maxBalances - 1; accountIndex++) {
     accountPublicKey = dataParsedJSON["balances"][accountIndex][0];
     // console.log('accountPublicKey: ', accountPublicKey);
@@ -69,9 +72,16 @@ async function main () {
       ss58ForPublicKey,
       newBalanceVal,
     ];
+    newBalanceValBigNumber = new BigNumber(newBalanceVal);
+    if (newBalanceValBigNumber != undefined) {
+      totalIssuanceBackup = totalIssuanceBackup.plus(newBalanceValBigNumber);
+    }
+    console.log(totalIssuanceBackup.toString());
+
     genesisVec.push(newAccount);
   }
   console.log("genesisVec: ", genesisVec);
+  console.log("totalIssuanceBackup: ", totalIssuanceBackup.toString());
 
   // serialize the modified data to JSON and store in file
   // format output indentation with 4 spaces
