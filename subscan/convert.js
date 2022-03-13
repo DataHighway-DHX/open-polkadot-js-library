@@ -27,9 +27,20 @@ function accountPublicKeyToSS58(accountPublicKey) {
 // Note: We don't use something like `> 123.456789.toFixed(18) because the output ends up like
 // '123.456789000000000556'`
 function getNewBalanceForTokenDecimals(existingBalanceVal, chainTokenDecimals) {
-  let currentDecimals = existingBalanceVal.length - (existingBalanceVal.indexOf('.') + 1);
+  let tempExistingBalanceValBigNumber = new BigNumber(existingBalanceVal);
+  // where EXISTENTIAL_DEPOSIT is 1000000000000000 in the blockchain configuration, which is 0.001 DHX,
+  // we need all imported accounts to have at least that balance, but some of them don't, so an error will
+  // occur when you try to export-genesis-state `the balance of any account should always be at least the existential deposit`,
+  // so boost their balance to the EXISTENTIAL_DEPOSIT if they have less balance than it.
+  if (tempExistingBalanceValBigNumber.isLessThan(0.001)) {
+    tempExistingBalanceValBigNumber = new BigNumber(0.001);
+  }
+  tempExistingBalanceValBigNumber = tempExistingBalanceValBigNumber.toString();
+  console.log('existingBalanceVal: ', existingBalanceVal)
+  console.log('tempExistingBalanceValBigNumber: ', tempExistingBalanceValBigNumber)
+  let currentDecimals = tempExistingBalanceValBigNumber.length - (tempExistingBalanceValBigNumber.indexOf('.') + 1);
   let extraRequired = chainTokenDecimals - currentDecimals;
-  let newStrWithoutDecimal = existingBalanceVal.concat("0".repeat(extraRequired)).replace('.', '');
+  let newStrWithoutDecimal = tempExistingBalanceValBigNumber.concat("0".repeat(extraRequired)).replace('.', '');
   return newStrWithoutDecimal;
 }
 
