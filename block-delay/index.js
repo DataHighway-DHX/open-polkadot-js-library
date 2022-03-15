@@ -10,6 +10,12 @@ function getWsProviderForArg() {
     case 'local':
       url = 'ws://127.0.0.1:9944';
       break;
+    case 'rococo-local':
+      url = 'ws://127.0.0.1:9988';
+      break;
+    case 'spreehafen':
+      url = 'wss://spreehafen.datahighway.com'; // Public Testnet
+      break;
     case 'brickable':
       url = 'wss://brickable.datahighway.com'; // Testnet (Private)
       break;
